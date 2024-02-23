@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       devise_for :users
       resources :items
       resources :users
+      resources :orders
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
