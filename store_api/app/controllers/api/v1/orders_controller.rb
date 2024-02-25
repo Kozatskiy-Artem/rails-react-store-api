@@ -1,19 +1,23 @@
 class Api::V1::OrdersController < ApplicationController
   before_action :set_order, only: %i[ show update destroy ]
   skip_before_action :verify_authenticity_token, raise: false  
-  before_action :authenticate_devise_api_token!, only: %i[ create ]
-  before_action :set_current_user, only: %i[ create ]
+  before_action :authenticate_devise_api_token!, only: %i[ index show create ]
+  before_action :set_current_user, only: %i[ index show create ]
 
   # GET /orders
   def index
-    @orders = Order.all
+    @orders = @current_user.orders
 
     render json: @orders
   end
 
   # GET /orders/1
   def show
-    render json: @order, include: { orders_descriptions: { include: :item } }
+    if @order.user == @current_user
+      render json: @order, include: { orders_descriptions: { include: :item } }
+    else
+      render json: { error: 'Forbidden' }, status: :forbidden
+    end
   end
 
   # POST /orders
